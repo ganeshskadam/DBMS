@@ -1,5 +1,9 @@
 // Practical 10 – MongoDB Aggregation and Indexing
 
+MongoDB - Aggregation and Indexing:
+Design and Develop MongoDB Queries using aggregation and indexing with suitable example
+using MongoDB. 
+
 use pr10
 db.createCollection("books");
 db.books.insertMany([{_id:1,title:"MongoDB Basics",author:"John",price:500,category:"Database",copies:30},{_id:2,title:"Node.js Guide",author:"Alex",price:700,category:"Backend",copies:25},{_id:3,title:"React in Depth",author:"Sarah",price:900,category:"Frontend",copies:40},{_id:4,title:"Python Tricks",author:"John",price:800,category:"Programming",copies:35},{_id:5,title:"MongoDB Advanced",author:"Alex",price:1200,category:"Database",copies:20}]);
