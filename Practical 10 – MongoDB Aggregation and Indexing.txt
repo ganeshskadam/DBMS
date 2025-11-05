@@ -1,0 +1,18 @@
+// Practical 10 – MongoDB Aggregation and Indexing
+
+use pr10
+db.createCollection("books");
+db.books.insertMany([{_id:1,title:"MongoDB Basics",author:"John",price:500,category:"Database",copies:30},{_id:2,title:"Node.js Guide",author:"Alex",price:700,category:"Backend",copies:25},{_id:3,title:"React in Depth",author:"Sarah",price:900,category:"Frontend",copies:40},{_id:4,title:"Python Tricks",author:"John",price:800,category:"Programming",copies:35},{_id:5,title:"MongoDB Advanced",author:"Alex",price:1200,category:"Database",copies:20}]);
+db.books.find();
+db.books.aggregate([{$group:{_id:"$category",totalCopies:{$sum:"$copies"}}}]);
+db.books.aggregate([{$group:{_id:"$author",avgPrice:{$avg:"$price"}}}]);
+db.books.aggregate([{$sort:{price:-1}}]);
+db.books.aggregate([{$sort:{price:1}}]);
+db.books.aggregate([{$project:{_id:0,title:1,author:1,price:1}}]);
+db.books.aggregate([{$match:{category:"Database",price:{$gt:600}}},{$sort:{price:-1}},{$project:{_id:0,title:1,price:1}}]);
+db.books.createIndex({title:1});
+db.books.createIndex({author:1,price:-1});
+db.books.getIndexes();
+db.books.find({author:"John"}).explain("executionStats");
+db.books.dropIndex({title:1});
+

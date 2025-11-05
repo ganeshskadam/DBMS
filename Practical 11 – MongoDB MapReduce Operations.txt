@@ -1,0 +1,10 @@
+// Practical 11 – MongoDB MapReduce Operations
+
+use ass11
+db.students.insertMany([{_id:1,name:"Aaru",subject:"Maths",marks:85},{_id:2,name:"Sanika",subject:"Science",marks:90},{_id:3,name:"Shubham",subject:"Maths",marks:75},{_id:4,name:"Khushi",subject:"Science",marks:80},{_id:5,name:"Arya",subject:"English",marks:95},{_id:6,name:"Rohan",subject:"Maths",marks:65}]);
+var mapFunction=function(){emit(this.subject,{totalMarks:this.marks,count:1});};
+var reduceFunction=function(subject,values){var result={totalMarks:0,count:0};values.forEach(function(value){result.totalMarks+=value.totalMarks;result.count+=value.count;});return result;};
+var finalizeFunction=function(subject,reducedValue){reducedValue.avgMarks=reducedValue.totalMarks/reducedValue.count;return reducedValue;};
+db.students.mapReduce(mapFunction,reduceFunction,{out:"subject_avg_marks",finalize:finalizeFunction});
+db.subject_avg_marks.find().pretty();
+

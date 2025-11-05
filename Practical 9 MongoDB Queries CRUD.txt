@@ -1,0 +1,23 @@
+// Practical 9 – MongoDB Queries CRUD
+
+use pr_9
+db.createCollection("library");
+db.library.insertMany([{bid:1,name:"C++"},{bid:2,name:"Python"},{bid:3,name:"Java"}]);
+db.library.find();
+db.library.updateOne({name:"C++"},{$set:{name:"C++ Programming"}});
+db.library.deleteOne({bid:2});
+db.library.insertOne({bid:4,name:"Java",desc:"fake book"});
+db.library.find({$and:[{name:"Java"},{desc:"fake book"}]});
+db.library.find({$or:[{name:"Java"},{name:"Python"}]});
+db.library.find({cost:{$not:{$gte:500}}});
+db.library.find({$nor:[{cost:{$gte:1000}},{bid:5}]});
+db.library.insertMany([{title:"Book A",cost:80},{title:"Book B",cost:200},{title:"Book C",cost:600}]);
+db.library.find({cost:{$eq:80}});
+db.library.find({cost:{$ne:1000}});
+db.library.find({cost:{$gt:100}});
+db.library.find({cost:{$lt:500}});
+db.library.find({cost:{$in:[80,200]}});
+db.library.find({cost:{$nin:[100,300]}});
+db.library.insertOne({bid:8,name:"pikachu",cost:320});
+db.library.updateOne({_id:ObjectId("690b5de77338c469ea9dc2a4")},{$set:{bid:8,name:"pikachu",cost:320}},{upsert:true});
+
