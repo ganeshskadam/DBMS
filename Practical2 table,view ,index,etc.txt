@@ -1,0 +1,46 @@
+create database practicals;
+use practicals;
+
+create table dept (roll_no int primary key, name varchar(50), class varchar(20), age int, address varchar(100), email varchar(50));
+
+insert into dept (roll_no, name, class, age, address, email) values (1, 'rahul sharma', 'computer te', 21, 'pune, maharashtra', 'rahul.sharma@gmail.com');
+insert into dept (roll_no, name, class, age, address, email) values (2, 'priya singh', 'computer te', 22, 'mumbai, maharashtra', 'priya.singh@gmail.com');
+insert into dept (roll_no, name, class, age, address, email) values (3, 'amit patel', 'computer te', 21, 'ahmedabad, gujarat', 'amit.patel@gmail.com');
+insert into dept (roll_no, name, class, age, address, email) values (4, 'sneha reddy', 'computer te', 22, 'hyderabad, telangana', 'sneha.reddy@gmail.com');
+
+create view v_dept as select name, roll_no, age from dept;
+
+create index i_rollno on dept (roll_no);
+create index i_name on dept (name);
+
+create table dept_master (id int primary key, email varchar(30));
+create table teacher (t_id int, name varchar(30), foreign key (t_id) references dept_master(id));
+insert into dept_master values (1, 'cse@gmail.com');
+insert into dept_master values (2, 'it@gmail.com');
+insert into teacher values (1, 'rahul sharma');
+insert into teacher values (2, 'sneha patil');
+
+create table te (roll int primary key auto_increment, name varchar(30));
+insert into te (name) values ('ganesh');
+insert into te (name) values ('onkar');
+insert into te (name) values ('saurabh');
+insert into te (name) values ('bal');
+insert into te (name) values ('rohan');
+
+create table dept3 (id int primary key, email varchar(30) not null, dept varchar(30) default 'cse');
+
+select * from dept;
+select * from dept where age = 21;
+select * from dept where roll_no between 1 and 5;
+select * from dept order by name asc;
+select * from dept where name like 'r%';
+update dept set age = 22 where roll_no = 3;
+delete from dept where roll_no = 2;
+select count(*), avg(age) from dept;
+select name from dept where age = 21 union select name from dept where age = 22;
+
+truncate table dept;
+drop view v_dept;
+drop table dept2;
+show tables;
+

@@ -1,0 +1,76 @@
+Practical 6 DBMS
+CREATE TABLE o_rollcall1(roll_no NUMBER, name VARCHAR2(25), div VARCHAR2(5));
+CREATE TABLE n_rollcall1(roll_no NUMBER, name VARCHAR2(25), div VARCHAR2(5));
+
+-- Old data (already in main table)
+INSERT INTO o_rollcall1 VALUES(1,'RADHA','A');
+INSERT INTO o_rollcall1 VALUES(2,'KRISHNA','A');
+
+-- New data (some duplicate, some new)
+INSERT INTO n_rollcall1 VALUES(1,'RADHA','A');   -- duplicate → skip
+INSERT INTO n_rollcall1 VALUES(3,'SHAM','B');    -- new → insert
+INSERT INTO n_rollcall1 VALUES(4,'KRISHNA','B'); -- new → insert
+
+DECLARE
+  CURSOR c_exists(p_roll NUMBER, p_name VARCHAR2, p_div VARCHAR2) IS
+    SELECT 1 FROM o_rollcall1
+     WHERE roll_no = p_roll AND name = p_name AND div = p_div;
+
+  v_flag NUMBER;
+BEGIN
+  FOR rec IN (SELECT roll_no, name, div FROM n_rollcall1) LOOP
+    v_flag := NULL;
+
+    OPEN c_exists(rec.roll_no, rec.name, rec.div);
+    FETCH c_exists INTO v_flag;
+    CLOSE c_exists;
+
+    IF v_flag IS NULL THEN
+      INSERT INTO o_rollcall1 VALUES(rec.roll_no, rec.name, rec.div);
+      DBMS_OUTPUT.PUT_LINE('Inserted: ' || rec.roll_no || ' - ' || rec.name || ' - ' || rec.div);
+    ELSE
+      DBMS_OUTPUT.PUT_LINE('Skipped (exists): ' || rec.roll_no || ' - ' || rec.name || ' - ' || rec.div);
+    END IF;
+  END LOOP;
+
+  COMMIT;
+END;
+/
+
+SELECT * FROM o_rollcall1 ORDER BY roll_no;
+SELECT * FROM n_rollcall1 ORDER BY roll_no;
+
+What is a Cursor?
+A cursor is like a pointer that helps PL/SQL read rows from a table one by one.
+There are two main types:
+1. Implicit Cursor – used automatically by Oracle when you run simple SELECT or INSERT.
+2. Explicit Cursor – declared manually when you want to control row-by-row data handling.
+What is a Parameterized Cursor?
+A parameterized cursor is an explicit cursor that accepts input values (parameters) —
+just like a function can accept arguments.
+It allows us to pass values dynamically each time the cursor is opened.
+Step 1 — Two Tables
+o_rollcall1 → Old table (main roll call list)
+n_rollcall1 → New table (contains some new and some duplicate data)
+Step 2 — Data
+RADHA(A) already exists in old table → should be skipped
+SHAM(B) and KRISHNA(B) are new → should be inserted
+Step 3 — Cursor Declaration
+CURSOR c_exists(p_roll NUMBER, p_name VARCHAR2, p_div VARCHAR2) IS
+SELECT 1 FROM o_rollcall1
+WHERE roll_no = p_roll AND name = p_name AND div = p_div;
+This cursor checks if a specific record already exists in the old table.
+It takes 3 parameters — roll number, name, and division — and searches for an exact match.
+Step 5 — Decision (Insert or Skip)
+IF v_flag IS NULL THEN
+INSERT INTO o_rollcall1 VALUES(...);
+DBMS_OUTPUT.PUT_LINE('Inserted...');
+ELSE
+DBMS_OUTPUT.PUT_LINE('Skipped...');
+END IF;
+If the cursor didn’t find any row (means that record does not exist),
+it inserts the new record into o_rollcall1.
+Otherwise, it prints a skip message.
+
+
+

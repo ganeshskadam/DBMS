@@ -1,0 +1,19 @@
+Practical 3RD
+CREATE TABLE Students (  student_id INT PRIMARY KEY, name VARCHAR(50), course_id INT);
+
+CREATE TABLE Courses ( course_id INT PRIMARY KEY,  course_name VARCHAR(50));
+INSERT INTO Students VALUES(1, 'Ramesh', 101),(2, 'Suresh', 102),(3, 'Mahesh', 103);
+INSERT INTO Courses VALUES(101, 'Java'),(102, 'Python'),(104, 'PHP');
+
+1) INNER JOIN
+SELECT Students.name, Courses.course_name FROM Students INNER JOIN Courses ON Students.course_id = Courses.course_id;
+2) LEFT JOIN
+SELECT Students.name, Courses.course_name FROM Students LEFT JOIN Courses ON Students.course_id = Courses.course_id;
+3) RIGHT JOIN
+SELECT Students.name, Courses.course_name FROM Students RIGHT JOIN Courses ON Students.course_id = Courses.course_id;
+4) FULL JOIN
+SELECT Students.name, Courses.course_name FROM Students LEFT JOIN Courses ON Students.course_id = Courses.course_id UNION SELECT Students.name, Courses.course_name FROM Students RIGHT JOIN Courses ON Students.course_id = Courses.course_id;
+VIEW
+create view v1 as select * from students;
+update v1 set name="Rahul" where student_id=1;
+drop view v1;
