@@ -1,5 +1,9 @@
 // Practical 9 – MongoDB Queries CRUD
 
+MongoDB Queries:
+Design and Develop MongoDB Queries using CRUD operations. (Use CRUD operations,
+SAVE method, logical operators etc.). 
+
 use pr_9
 db.createCollection("library");
 db.library.insertMany([{bid:1,name:"C++"},{bid:2,name:"Python"},{bid:3,name:"Java"}]);
