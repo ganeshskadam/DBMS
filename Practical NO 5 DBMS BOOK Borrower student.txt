@@ -1,0 +1,58 @@
+Practical NO=5 DBMS
+CREATE TABLE stud_marks(name VARCHAR2(25), total_marks NUMBER);
+CREATE TABLE result(roll_number NUMBER, name VARCHAR2(25), class VARCHAR2(30));
+
+CREATE OR REPLACE PROCEDURE procedure_1(p_roll IN NUMBER, p_name IN VARCHAR2, p_marks IN NUMBER) AS
+  v_class VARCHAR2(30);
+BEGIN
+  IF p_marks BETWEEN 990 AND 1500 THEN
+    v_class := 'DISTINCTION';
+  ELSIF p_marks BETWEEN 900 AND 989 THEN
+    v_class := 'FIRST CLASS';
+  ELSIF p_marks BETWEEN 825 AND 899 THEN
+    v_class := 'HIGHER SECOND CLASS';
+  ELSE
+    v_class := 'FAIL';
+  END IF;
+
+  INSERT INTO result VALUES(p_roll, p_name, v_class);
+  INSERT INTO stud_marks VALUES(p_name, p_marks);
+  COMMIT;
+  DBMS_OUTPUT.PUT_LINE('Class: ' || v_class);
+END procedure_1;
+/
+CREATE OR REPLACE FUNCTION func_1(r IN NUMBER, n IN VARCHAR2, m IN NUMBER)
+RETURN VARCHAR2 AS
+BEGIN
+  procedure_1(r, n, m);
+  RETURN 'SUCCESSFUL';
+END func_1;
+/
+DECLARE
+  r NUMBER := 1;
+  n VARCHAR2(25) := 'VIRAT';
+  m NUMBER := 1250;
+  res VARCHAR2(20);
+BEGIN
+  res := func_1(r, n, m);
+  DBMS_OUTPUT.PUT_LINE('Result: ' || res);
+END;
+/
+SELECT * FROM stud_marks;
+SELECT * FROM result;
+Short Explanation of What the Code Does
+    1. Creates two tables:1) stud_marks(name, total_marks) → stores student names and marks. 2) result (roll_number, name, class) → stores roll number, name, and grade category.
+    2. Creates a Stored Procedure (procedure_1)
+→ It takes roll number, name, marks as inputs
+→ Decides the grade category based on marks: 990–1500 → DISTINCTION ,900–989 → FIRST CLASS ,825–899 → HIGHER SECOND CLASS, Below 825 → FAIL
+→ Then inserts that data into both tables and prints the class.
+    3. Creates a Stored Function(func_1)
+→ It simply calls the procedure and returns the word 'SUCCESSFUL' to confirm it worked
+ Stored Procedure :- A Stored Procedure is a named PL/SQL block that performs one or more specific tasks.  It can take input parameters, perform operations, and optionally update database tables.
+Stored Function:-A Stored Function is similar to a procedure but always returns a value. It can call procedures and be used inside SQL statements
+Procedure					Function
+Does not return a value directly	Always returns a value
+Called using EXEC or from another block	Can be called from SQL or another block
+Used for performing actions	Used for computations and returning results
+
+

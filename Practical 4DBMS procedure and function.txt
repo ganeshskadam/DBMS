@@ -1,0 +1,63 @@
+Practical 4DBMS
+CREATE TABLE borrower1 (roll_no NUMBER, name VARCHAR2(25), dateofissue DATE, name_of_book VARCHAR2(25), status VARCHAR2(20));
+CREATE TABLE fine1 (roll_no NUMBER, date_of_return DATE, amt NUMBER);
+INSERT INTO borrower1 VALUES(1,'VIRAT',TO_DATE('01-08-2025','DD-MM-YYYY'),'HARRY POTTER','Issued');
+INSERT INTO borrower1 VALUES(2,'ROHIT',TO_DATE('15-08-2025','DD-MM-YYYY'),'DARK MATTER','Issued');
+INSERT INTO borrower1 VALUES(3,'RAHUL',TO_DATE('24-07-2025','DD-MM-YYYY'),'SILENT HILL','Issued');
+COMMIT;
+
+DECLARE
+  v_roll NUMBER := 1;
+  v_book VARCHAR2(25) := 'HARRY POTTER';
+  v_issue DATE;
+  v_days NUMBER;
+  v_fine NUMBER := 0;
+BEGIN
+  SELECT dateofissue INTO v_issue FROM borrower1
+  WHERE roll_no = v_roll AND name_of_book = v_book;
+
+  v_days := TRUNC(SYSDATE) - TRUNC(v_issue);
+
+  IF v_days > 30 THEN
+    v_fine := 15*5 + (v_days - 30)*50;
+  ELSIF v_days > 15 THEN
+    v_fine := (v_days - 15)*5;
+  END IF;
+
+  IF v_fine > 0 THEN
+    INSERT INTO fine1 VALUES(v_roll, SYSDATE, v_fine);
+  END IF;
+
+  UPDATE borrower1 SET status = 'Returned'
+  WHERE roll_no = v_roll AND name_of_book = v_book;
+  COMMIT;
+
+  DBMS_OUTPUT.PUT_LINE('Roll No: '||v_roll||' | Days: '||v_days||' | Fine: Rs '||v_fine);
+EXCEPTION
+  WHEN NO_DATA_FOUND THEN DBMS_OUTPUT.PUT_LINE('No record found.');
+  WHEN OTHERS THEN DBMS_OUTPUT.PUT_LINE('Error: '||SQLERRM);
+END;
+/
+
+SELECT * FROM borrower1;
+SELECT * FROM fine1;
+
+The procedure (proc_return_book) accepts (roll_no) and (name_of_book) checks that the book is currently issued, computes days elapsed using (TRUNC(SYSDATE)-TRUNC(dateofissue)), and applies the fine rules: ₹5/day for days 16–30 and ₹50/day for days beyond 30 (plus ₹5 for days 16–30). If a fine > 0 is due and not already recorded today, it inserts into (fine1)and updates the borrower's status to( Returned). Named exception (e_not_issued), (NO_DATA_FOUND,) and OTHERS handle error cases and print informative messages.
+Easy Explanation (in your own words)
+PL/SQL block structure:
+Every PL/SQL program has four main parts: 1) DECLARE: we create variables (like v_roll, v_fine, etc.) 2) BEGIN: we write the main code (like calculations, IF conditions, and SQL commands). 3) EXCEPTION: handles errors (like “no record found”). 4) END; ends the block.
+Control structures (IF, ELSIF, ELSE):
+These are used to make decisions. 1)If days > 30 → fine = ₹50/day. 2) Else if days > 15 → fine = ₹5/day. 3) Else → no fine.
+This helps the program choose what to do based on the condition.
+Date arithmetic:
+TRUNC(SYSDATE) - TRUNC(dateofissue) gives the number of days between today and the issue date.
+This is how we calculate how long the book was borrowed.
+Transactions (COMMIT / ROLLBACK): 1) COMMIT means “save all changes” (like saving fine and status updates permanently). 2) ROLLBACK means “undo changes” if something goes wrong.
+It helps to keep your data safe and correct.
+Exception handling:
+Sometimes errors happen (like wrong roll number or no record).
+So, we handle them using:
+Built-in exceptions → e.g. NO_DATA_FOUND, OTHERS. 
+User-defined exceptions → we can create our own (like e_not_issued).
+This avoids program crashes and shows a helpful message instead.
+
